@@ -1,5 +1,5 @@
 // Snippet to be used with DSMP DIY MODULE
-// Binding is handled by the module, so the button supposed to be pressed ON for the correct value of failsafe
+// Binding is handled by the module, so the button is supposed to be pressed ON for the correct value of failsafe
 
 
 // Pin for PPM output
@@ -10,6 +10,9 @@ const int buttonPin = 2;
 
 // Frame length in microseconds (22ms)
 const unsigned long frameLength = 22000;
+
+// Low signal duration to separate channels (in microseconds)
+const unsigned int channelSeparator = 300;
 
 void setup() {
   pinMode(ppmPin, OUTPUT);
@@ -33,14 +36,16 @@ void loop() {
   digitalWrite(ppmPin, HIGH);
   delayMicroseconds(shutOffPulseWidth);
   digitalWrite(ppmPin, LOW);
+  delayMicroseconds(channelSeparator); // Short low signal to separate channels
 
   // Generate the PPM signal for the blank channel (1500µs pulse width)
   digitalWrite(ppmPin, HIGH);
   delayMicroseconds(1500); // Blank channel pulse width
   digitalWrite(ppmPin, LOW);
+  delayMicroseconds(channelSeparator); // Short low signal to separate channels
 
   // Fill the rest of the frame with shut-off OFF
-  delayMicroseconds(frameLength - shutOffPulseWidth - 1500);
+  delayMicroseconds(frameLength - shutOffPulseWidth - 1500 - 2 * channelSeparator);
 
   // Repeat to generate the continuous PPM signal
 }
